@@ -14,5 +14,13 @@ class Figure(ABC):
         raise NotImplementedError
     
 
+class Elephant(Figure):
+    def access_check(self, x: int, y: int) -> bool:
+        return abs(self._x - x) == abs(self._y - y)
+
+    def correct(self):
+        pass
+    
+
 if __name__ == '__main__':
     pass
