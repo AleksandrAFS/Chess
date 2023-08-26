@@ -1,5 +1,10 @@
 from itertools import product
-from figures import *
+
+class Void:
+    _color = None
+    
+    def __repr__(self):
+        return ' '
 
 
 class Board:
