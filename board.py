@@ -1,5 +1,5 @@
 from itertools import product
-from figures.py import *
+from figures import *
 
 class Board:
     """Шахматная доска, 
