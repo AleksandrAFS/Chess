@@ -3,8 +3,7 @@ from figures import Castle, Knight, Elephant, Void, Pawn, King, Queen
 
 
 class Board:
-    """Шахматная доска, 
-       атрибут goto - по умолчанию(True) раставляет 
+    """Шахматная доска, раставляет 
        все экземпляры фигур на поле"""
        
     def __init__(self) -> None:
