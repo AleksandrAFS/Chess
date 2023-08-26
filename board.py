@@ -1,5 +1,6 @@
 from itertools import product
-  
+from figures.py import *
+
 class Board:
     """Шахматная доска, 
        атрибут goto - по умолчанию(True) раставляет 
