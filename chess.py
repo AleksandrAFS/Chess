@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class Figure(ABC):
-    def __init__(self, x: int, y: int, color: str):
+    def __init__(self, x: int, y: int, color: bool):
         self._x, self._y, self._color = x, y, color
 
     @abstractmethod
@@ -26,7 +26,7 @@ class Elephant(Figure):
         pass
 
     def __repr__(self):
-        pass
+        return ('♝', '♗')[self._color]
 
 
 class Castle(Figure):
@@ -37,7 +37,7 @@ class Castle(Figure):
         pass
 
     def __repr__(self):
-        pass
+        return ('♜', '♖')[self._color]
 
 
 class Queen(Figure):
@@ -50,7 +50,7 @@ class Queen(Figure):
         pass
 
     def __repr__(self):
-        pass
+        return ('♛', '♕')[self._color]
 
 
 class Knight(Figure):
@@ -61,7 +61,7 @@ class Knight(Figure):
         pass
 
     def __repr__(self):
-        pass
+        return ('♞', '♘')[self._color]
     
 
 if __name__ == '__main__':
