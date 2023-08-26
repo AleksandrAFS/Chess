@@ -13,7 +13,7 @@ class Board:
        все экземпляры фигур на поле"""
        
     def __init__(self) -> None:
-        self.matrix = [[None] * 8 for _ in range(8)]
+        self.matrix = [[Void()] * 8 for _ in range(8)]
         self.types = (Castle, Knight, Elephant)
         
         self.create(1, True)
