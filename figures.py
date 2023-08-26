@@ -1,5 +1,10 @@
 from abc import ABC, abstractmethod
 
+class Void:
+    _color = None
+    
+    def __repr__(self):
+        return ' '
 
 class Figure(ABC):
     def __init__(self, color: bool, matr: list[list[int], list[int]]):
