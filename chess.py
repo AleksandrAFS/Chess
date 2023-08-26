@@ -64,5 +64,16 @@ class Knight(Figure):
         return ('♞', '♘')[self._color]
     
 
+class King(Figure):
+    def access_check(self, x: int, y: int) -> bool:
+        return abs(self._x - x) <= 1 and abs(self._y - y) <= 1
+    
+    def correct(self):
+        pass
+
+    def __repr__(self):
+        return ('♚', '♔')[self._color]
+    
+
 if __name__ == '__main__':
     pass
