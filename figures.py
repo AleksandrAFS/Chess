@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-<<<<<<< HEAD
 
-=======
->>>>>>> 3fb0a17668a0deaf1f078f900ff15c7b13129314
 
 class Figure(ABC):
     def __init__(self, color: bool, matr: list[list[int], list[int]]):
@@ -80,4 +77,11 @@ class King(Figure):
     
 
 class Pawn(Figure):
-    pass
+    def access_check(self, x: int, y: int) -> bool:
+        pass
+
+    def correct(self):
+        pass
+
+    def __repr__(self):
+        return ('♟', '♙')[self._color]
