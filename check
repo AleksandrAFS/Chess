@@ -2,6 +2,7 @@ class Board:
     """Шахматная доска, 
        атрибут goto - по умолчанию(True) раставляет 
        все экземпляры фигур на поле"""
+
     def __init__(self, goto=True) -> None:
         self.matrix = [[None] * 8 for _ in range(8)]
         self.types = [Castle, Knight, Elephant]
