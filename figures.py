@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from board import Board
-
 
 class Figure(ABC):
     def __init__(self, color: bool, matr: list[list[int], list[int]]):
