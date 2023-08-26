@@ -40,6 +40,9 @@ class Queen(Figure):
         _y: int = self._y
         return abs(_x - x) <= 1 and abs(_y - y) <= 1 or _x == x or _y == y
     
+    def correct(self):
+        pass
+    
 
 if __name__ == '__main__':
     pass
