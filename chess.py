@@ -25,12 +25,18 @@ class Elephant(Figure):
     def correct(self):
         pass
 
+    def __repr__(self):
+        pass
+
 
 class Castle(Figure):
     def access_check(self, x: int, y: int) -> bool:
         return self._x == x or self._y == y
     
     def correct(self):
+        pass
+
+    def __repr__(self):
         pass
 
 
@@ -41,6 +47,20 @@ class Queen(Figure):
         return abs(_x - x) <= 1 and abs(_y - y) <= 1 or _x == x or _y == y
     
     def correct(self):
+        pass
+
+    def __repr__(self):
+        pass
+
+
+class Knight(Figure):
+    def access_check(self, x: int, y: int) -> bool:
+        return (self._x - x) ** 2 + (self._y - y) ** 2 == 5
+    
+    def correct(self):
+        pass
+
+    def __repr__(self):
         pass
     
 
