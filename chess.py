@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class Figure(ABC):
-    def __init__(self, x, y, color):
+    def __init__(self, x: int, y: int, color: str):
         self._x, self._y, self._color = x, y, color
 
     @abstractmethod
