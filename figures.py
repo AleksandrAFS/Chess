@@ -78,10 +78,26 @@ class King(Figure):
 
 class Pawn(Figure):
     def access_check(self, x: int, y: int) -> bool:
-        pass
-
-    def correct(self):
-        pass
-
-    def __repr__(self):
+        select = [1, -1][self._color]
+        prod = all(0 <= i < 8 for i in (x, y))
+        
+        if (
+            self._x - x == select 
+            and abs(self._y - y) <= 1 
+            and prod
+           ):
+            self.correct(x, y, Figure if self._y != y else Void)
+           
+    def correct(self, row: int, col: int, goto: object = Void) -> bool:
+        matr = self._matr[row]
+        
+        if (
+            isinstance(matr[col], goto)
+            and matr[col]._color != self._color
+            ):
+              self._matr[self._x][self._y] = Void()
+              self._matr[row][col] = self
+              self._x, self._y = row, col
+            
+    def __repr__(self) -> None:
         return ('♟', '♙')[self._color]
