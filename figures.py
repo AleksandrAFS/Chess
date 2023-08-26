@@ -1,8 +1,11 @@
 from abc import ABC, abstractmethod
+from board import Board
 
 
 class Figure(ABC):
-    __slots__ = ('_x', '_y', '_color')
+    def __init__(self, color: bool, matr: list[list[int], list[int]]):
+        self._color = color
+        self._matr = matr
 
     @abstractmethod
     def access_check(self):
@@ -75,12 +78,4 @@ class King(Figure):
     
 
 class Pawn(Figure):
-    def access_check(self, x: int, y: int) -> bool:
-        return
-    
-
-if __name__ == '__main__':
     pass
-
-
-print(hasattr(Pawn, '__slots__'))
