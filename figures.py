@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
+<<<<<<< HEAD
 
+=======
+>>>>>>> 3fb0a17668a0deaf1f078f900ff15c7b13129314
 
 class Figure(ABC):
     def __init__(self, color: bool, matr: list[list[int], list[int]]):
