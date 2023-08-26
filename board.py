@@ -1,5 +1,5 @@
 from itertools import product
-from board import * 
+from figures import Castle, Knight, Elephant, Queen, Pawn, King
 
 
 class Board:
