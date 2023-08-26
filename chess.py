@@ -13,6 +13,10 @@ class Figure(ABC):
     def correct(self):
         raise NotImplementedError
     
+    @abstractmethod
+    def __repr__(self):
+        raise NotImplementedError
+    
 
 class Elephant(Figure):
     def access_check(self, x: int, y: int) -> bool:
@@ -28,6 +32,13 @@ class Castle(Figure):
     
     def correct(self):
         pass
+
+
+class Queen(Figure):
+    def access_check(self, x: int, y: int) -> bool:
+        _x: int = self._x
+        _y: int = self._y
+        return abs(_x - x) <= 1 and abs(_y - y) <= 1 or _x == x or _y == y
     
 
 if __name__ == '__main__':
