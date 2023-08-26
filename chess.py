@@ -20,6 +20,14 @@ class Elephant(Figure):
 
     def correct(self):
         pass
+
+
+class Castle(Figure):
+    def access_check(self, x: int, y: int) -> bool:
+        return self._x == x or self._y == y
+    
+    def correct(self):
+        pass
     
 
 if __name__ == '__main__':
