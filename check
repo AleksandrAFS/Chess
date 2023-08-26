@@ -1,1 +1,25 @@
-print('hello world')
+class Board:
+    """Шахматная доска, 
+       атрибут goto - по умолчанию(True) раставляет 
+       все экземпляры фигур на поле"""
+    def __init__(self, goto=True) -> None:
+        self.matrix = [[None] * 8 for _ in range(8)]
+        self.types = [Castle, Knight, Elephant]
+        if goto:
+            self.create(1, True)
+            self.create(7, False)
+        
+    def create(self, side: int, color: bool) -> None:
+        for value in range(8):
+            self.matrix[side][value] = Pawn()#(side, value, color)
+            
+        for i in range(3):
+            self.matrix[side - 1][i] = self.types[i]()
+            self.matrix[side - 1][~i] = self.types[i]()
+        self.matrix[side - 1][4] = Queen()
+        self.matrix[side - 1][3] = King()
+        
+        if color is False:
+            self.matrix[side], self.matrix[side - 1] = self.matrix[side - 1], self.matrix[side]
+            self.matrix[side][3], self.matrix[side][4] = self.matrix[side][4], self.matrix[side][3]
+            
