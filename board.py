@@ -29,17 +29,16 @@ class Board:
             
         #установка кароля и королевы
         
-        self.matrix[side - 1][4] = Queen(color, self.matrix)
-        self.matrix[side - 1][3] = King(color, self.matrix)
+        self.matrix[side - 1][3] = Queen(color, self.matrix)
+        self.matrix[side - 1][4] = King(color, self.matrix)
         
         if color is False:
             self.matrix[side - 1:] = [*reversed(self.matrix[side - 1:])]
-            self.matrix[side][3:5] = [*reversed(self.matrix[side][3:5])]
     
     def end(self) -> None:
         for i, j in product(range(8), repeat=2):
             obj = self.matrix[i][j]
-            if obj: obj._x, obj._y = i, j
+            obj._x, obj._y = i, j
 
     def __repr__(self):
         return '\n'.join(', '.join(map(str, r)) for r in self.matrix)
