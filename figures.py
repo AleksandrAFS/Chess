@@ -13,10 +13,9 @@ class Figure(ABC):
         self._color = color
         self._matr = matr
         
-
     @abstractmethod
-    def access_check(self):
-        raise NotImplementedError
+    def access_check(self, x: int, y: int) -> bool:
+        return all(0 <= i < 8 for i in (x, y))
     
     @abstractmethod
     def correct(self, row: int, col: int) -> bool:
@@ -26,21 +25,28 @@ class Figure(ABC):
         return True
     
     @abstractmethod
-    def access_check(self):
-        raise NotImplementedError
-    
-    @abstractmethod
     def __repr__(self):
         raise NotImplementedError
     
 
-
 class Castle(Figure):
-    def access_check(self, x: int, y: int) -> bool:
-        return self._x == x or self._y == y
-    
+    def access_check(self, x: int, y: int) -> bool | None:
+        if (
+            self._x == x 
+            or self._y == y 
+            and super().access_check(x, y)
+        ):
+            return self.correct(x, y)
+        
     def correct(self, row: int, col: int) -> bool | None:
-        pass
+        if self._x != row:
+            select = (1, -1)[self._x > row]
+            if all(isinstance(self._matr[r][col], Void) for r in range(self._x + select, row, select)):
+                return super().correct(row, col)
+        else:
+            select = (1, -1)[self._y > col]
+            if all(isinstance(c, Void) for c in self._matr[row][self._y + select:col:select]):
+                return super().correct(row, col)
 
     def __repr__(self):
         return ('♜', '♖')[self._color]
@@ -50,24 +56,35 @@ class Queen(Figure):
     def access_check(self, x: int, y: int) -> bool:
         _x: int = self._x
         _y: int = self._y
-        return abs(_x - x) <= 1 and abs(_y - y) <= 1 or _x == x or _y == y
+        if (
+            abs(_x - x) <= 1 
+            and abs(_y - y) <= 1 
+            or _x == x 
+            or _y == y 
+            and super().access_check(x, y)
+        ):
+            return self.correct(x, y)
     
-    def correct(self):
-        pass
+    def correct(self, row: int, col: int) -> bool | None:
+        if (
+            Elephant(self._color, self._matrix).correct(row, col)
+            and Castle(self._color, self._matrix).correct(row, col)
+            ):
+            return super().correct(row, col)
 
     def __repr__(self):
         return ('♛', '♕')[self._color]
 
 
 class Knight(Figure):
-    def access_check(self, x: int, y: int) -> bool:
+    def access_check(self, x: int, y: int) -> bool | None:
         if (
             (self._x - x) ** 2 + (self._y - y) ** 2 == 5 
             and super().access_check(x, y)
         ):
             return self.correct(x, y)
             
-    def correct(self, row: int, col: int) -> bool:
+    def correct(self, row: int, col: int) -> bool | None:
         if self._matr[row][col]._color != self._color:
             return super().correct(row, col)
 
@@ -76,10 +93,15 @@ class Knight(Figure):
     
 
 class King(Figure):
-    def access_check(self, x: int, y: int) -> bool:
-        return abs(self._x - x) <= 1 and abs(self._y - y) <= 1
+    def access_check(self, x: int, y: int) -> bool | None:
+        if (
+            abs(self._x - x) <= 1 
+            and abs(self._y - y) <= 1
+            and super().access_check(x, y)
+        ):
+            return self.correct(x, y)
     
-    def correct(self):
+    def correct(self, row: int, col: int) -> bool | None:
         pass
 
     def __repr__(self) -> str:
@@ -115,11 +137,20 @@ class Elephant(Figure):
         if (
             abs(self._x - x) == abs(self._y - y)
             and super().access_check(x, y)
-        ):
+        ):  
             return self.correct(x, y)
 
-    def correct(self):
-        pass
+    def correct(self, x, y):
+        x_ = -1 if self._x > x else 1
+        y_=  -1 if self._y > y else 1
+        if (
+            self._matr[x][y]._color != self._color 
+            and all(
+                    isinstance(self._matr[i][j], Void)
+                    for i, j in zip(range(self._x + x_, x, x_), range(self._y + y_, y, y_))
+                )
+        ):
+            return super().correct(x, y)
 
     def __repr__(self):
-        return ('♝', '♗')[self._color]
+        return ('♝', '♗')[self._color] 

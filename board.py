@@ -40,4 +40,6 @@ class Board:
         for i, j in product(range(8), repeat=2):
             obj = self.matrix[i][j]
             if obj: obj._x, obj._y = i, j
-            
+
+    def __repr__(self):
+        return '\n'.join(', '.join(map(str, r)) for r in self.matrix)
