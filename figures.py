@@ -13,17 +13,15 @@ class Figure(ABC):
         self._color = color
         self._matr = matr
         
-
-    @abstractmethod
-    def access_check(self):
-        raise NotImplementedError
-    
-    @abstractmethod
     def correct(self, row: int, col: int) -> bool:
         self._matr[self._x][self._y] = Void()
         self._matr[row][col] = self
         self._x, self._y = row, col
         return True
+    
+    @abstractmethod
+    def access_check(self):
+        raise NotImplementedError
     
     @abstractmethod
     def __repr__(self):
@@ -42,10 +40,11 @@ class Elephant(Figure):
 
 
 class Castle(Figure):
-    def access_check(self, x: int, y: int) -> bool:
-        return self._x == x or self._y == y
+    def access_check(self, x: int, y: int) -> bool | None:
+        if self._x == x or self._y == y:
+            return self.correct(x, y)
     
-    def correct(self):
+    def correct(self, row: int, col: int) -> bool | None:
         pass
 
     def __repr__(self) -> str:
@@ -83,14 +82,14 @@ class King(Figure):
         return abs(self._x - x) <= 1 and abs(self._y - y) <= 1
     
     def correct(self):
-        pass
-
+        pass    
+    
     def __repr__(self) -> str:
         return ('♚', '♔')[self._color]
     
 
 class Pawn(Figure):
-    def access_check(self, x: int, y: int) -> bool:
+    def access_check(self, x: int, y: int) -> bool | None:
         select = [1, -1][self._color]
         prod = all(0 <= i < 8 for i in (x, y))
         
@@ -101,7 +100,7 @@ class Pawn(Figure):
            ):
             return self.correct(x, y, Figure if self._y != y else Void)
            
-    def correct(self, row: int, col: int, goto: object = Void) -> bool:
+    def correct(self, row: int, col: int, goto: object = Void) -> bool | None:
         matr = self._matr[row]
         
         if (

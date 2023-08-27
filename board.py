@@ -1,5 +1,4 @@
 from itertools import product
-from pprint import pprint
 from figures import Castle, Knight, Elephant, Void, Pawn, King, Queen
 
 
@@ -41,6 +40,4 @@ class Board:
         for i, j in product(range(8), repeat=2):
             obj = self.matrix[i][j]
             if obj: obj._x, obj._y = i, j
-
-
-pprint(Board().matrix)
+            
