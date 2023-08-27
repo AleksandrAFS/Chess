@@ -32,21 +32,29 @@ class Figure(ABC):
 class Castle(Figure):
     def access_check(self, x: int, y: int) -> bool | None:
         if (
-            self._x == x 
-            or self._y == y 
+            (self._x == x 
+            or self._y == y) 
             and super().access_check(x, y)
         ):
             return self.correct(x, y)
         
     def correct(self, row: int, col: int) -> bool | None:
-        if self._x != row:
-            select = (1, -1)[self._x > row]
-            if all(isinstance(self._matr[r][col], Void) for r in range(self._x + select, row, select)):
-                return super().correct(row, col)
-        else:
-            select = (1, -1)[self._y > col]
-            if all(isinstance(c, Void) for c in self._matr[row][self._y + select:col:select]):
-                return super().correct(row, col)
+        start, end = [row] * 8, [col] * 8
+        
+        match row:
+            case self._x:
+                select = (1, -1)[self._y > col]
+                end = range(self._y + select, col, select)
+            case _:
+                select = (1, -1)[self._x > row]
+                start = range(self._x + select, row, select)
+                
+        if (
+            self._matr[row][col]._color != self._color
+            and all(isinstance(self._matr[i][j], Void) 
+                    for i, j in zip(start, end))
+        ):
+            return super().correct(row, col)
 
     def __repr__(self):
         return ('♜', '♖')[self._color]
