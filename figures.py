@@ -116,7 +116,6 @@ class Elephant(Figure):
             abs(self._x - x) == abs(self._y - y)
             and super().access_check(x, y)
         ):  
-            print(1)
             return self.correct(x, y)
 
     def correct(self, x, y):
