@@ -9,7 +9,7 @@ class Void:
     
 
 class Figure(ABC):
-    def __init__(self, color: bool, matr: list[list[int], list[int]]):
+    def __init__(self, color: bool, matr: list[list[int], list[int]]) -> None:
         self._color = color
         self._matr = matr
         
@@ -17,7 +17,6 @@ class Figure(ABC):
     def access_check(self, x: int, y: int) -> bool:
         return all(0 <= i < 8 for i in (x, y))
     
-    @abstractmethod
     def correct(self, row: int, col: int) -> bool:
         self._matr[self._x][self._y] = Void()
         self._matr[row][col] = self
@@ -56,7 +55,7 @@ class Castle(Figure):
         ):
             return super().correct(row, col)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♜', '♖')[self._color]
 
 
@@ -68,10 +67,7 @@ class Queen(Figure):
             if creats.access_check(x, y):
                 return super().correct(x, y)
     
-    def correct(self) -> None:
-        pass
-
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♛', '♕')[self._color]
 
 
@@ -101,7 +97,8 @@ class King(Figure):
             return self.correct(x, y)
     
     def correct(self, row: int, col: int) -> bool | None:
-        pass
+        if self._matr[row][col]._color != self._color:
+            return super().correct(row, col)
 
     def __repr__(self) -> str:
         return ('♚', '♔')[self._color]
@@ -132,14 +129,14 @@ class Pawn(Figure):
             
 
 class Elephant(Figure):
-    def access_check(self, x: int, y: int) -> bool:
+    def access_check(self, x: int, y: int) -> bool | None:
         if (
             abs(self._x - x) == abs(self._y - y)
             and super().access_check(x, y)
         ):  
             return self.correct(x, y)
 
-    def correct(self, x, y):
+    def correct(self, x: int, y: int) -> bool | None:
         x_ = -1 if self._x > x else 1
         y_=  -1 if self._y > y else 1
         if (
@@ -151,5 +148,5 @@ class Elephant(Figure):
         ):
             return super().correct(x, y)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♝', '♗')[self._color] 
