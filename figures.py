@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 
+
 class Void:
     _color = None
     
     def __repr__(self):
         return ' '
+
 
 class Figure(ABC):
     def __init__(self, color: bool, matr: list[list[int], list[int]]):
@@ -31,7 +33,7 @@ class Elephant(Figure):
     def correct(self):
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♝', '♗')[self._color]
 
 
@@ -42,7 +44,7 @@ class Castle(Figure):
     def correct(self):
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♜', '♖')[self._color]
 
 
@@ -55,7 +57,7 @@ class Queen(Figure):
     def correct(self):
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♛', '♕')[self._color]
 
 
@@ -66,7 +68,7 @@ class Knight(Figure):
     def correct(self):
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♞', '♘')[self._color]
     
 
@@ -77,7 +79,7 @@ class King(Figure):
     def correct(self):
         pass
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♚', '♔')[self._color]
     
 
@@ -104,5 +106,5 @@ class Pawn(Figure):
               self._matr[row][col] = self
               self._x, self._y = row, col
             
-    def __repr__(self) -> None:
+    def __repr__(self) -> str:
         return ('♟', '♙')[self._color]
