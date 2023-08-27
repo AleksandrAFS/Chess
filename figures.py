@@ -10,14 +10,18 @@ class Figure(ABC):
     def __init__(self, color: bool, matr: list[list[int], list[int]]):
         self._color = color
         self._matr = matr
+        
 
     @abstractmethod
     def access_check(self):
         raise NotImplementedError
     
     @abstractmethod
-    def correct(self):
-        raise NotImplementedError
+    def correct(self, row: int, col: int) -> bool:
+        self._matr[self._x][self._y] = Void()
+        self._matr[row][col] = self
+        self._x, self._y = row, col
+        return True
     
     @abstractmethod
     def __repr__(self):
@@ -61,12 +65,14 @@ class Queen(Figure):
 
 class Knight(Figure):
     def access_check(self, x: int, y: int) -> bool:
-        return (self._x - x) ** 2 + (self._y - y) ** 2 == 5
-    
-    def correct(self):
-        pass
+        if (self._x - x) ** 2 + (self._y - y) ** 2 == 5:
+            return self.correct(x, y)
+            
+    def correct(self, row: int, col: int) -> bool:
+        if self._matr[row][col]._color != self._color:
+            return super().correct(row, col)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return ('♞', '♘')[self._color]
     
 
@@ -91,7 +97,7 @@ class Pawn(Figure):
             and abs(self._y - y) <= 1 
             and prod
            ):
-            self.correct(x, y, Figure if self._y != y else Void)
+            return self.correct(x, y, Figure if self._y != y else Void)
            
     def correct(self, row: int, col: int, goto: object = Void) -> bool:
         matr = self._matr[row]
@@ -100,9 +106,7 @@ class Pawn(Figure):
             isinstance(matr[col], goto)
             and matr[col]._color != self._color
             ):
-              self._matr[self._x][self._y] = Void()
-              self._matr[row][col] = self
-              self._x, self._y = row, col
+              return super().correct(row, col)
             
-    def __repr__(self) -> None:
+    def __repr__(self) -> str:
         return ('♟', '♙')[self._color]
