@@ -62,23 +62,14 @@ class Castle(Figure):
 
 class Queen(Figure):
     def access_check(self, x: int, y: int) -> bool:
-        _x: int = self._x
-        _y: int = self._y
-        if (
-            abs(_x - x) <= 1 
-            and abs(_y - y) <= 1 
-            or _x == x 
-            or _y == y 
-            and super().access_check(x, y)
-        ):
-            return self.correct(x, y)
+        for figur in (Elephant, Castle):
+            creats = figur(self._color, self._matr)
+            creats._x, creats._y = self._x, self._y
+            if creats.access_check(x, y):
+                return super().correct(x, y)
     
-    def correct(self, row: int, col: int) -> bool | None:
-        if (
-            Elephant(self._color, self._matrix).correct(row, col)
-            and Castle(self._color, self._matrix).correct(row, col)
-            ):
-            return super().correct(row, col)
+    def correct(self) -> None:
+        pass
 
     def __repr__(self):
         return ('♛', '♕')[self._color]
