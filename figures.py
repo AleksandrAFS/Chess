@@ -115,11 +115,21 @@ class Elephant(Figure):
         if (
             abs(self._x - x) == abs(self._y - y)
             and super().access_check(x, y)
-        ):
+        ):  
+            print(1)
             return self.correct(x, y)
 
-    def correct(self):
-        pass
+    def correct(self, x, y):
+        x_ = -1 if self._x > x else 1
+        y_=  -1 if self._y > y else 1
+        if (
+            self._matr[x][y]._color != self._color 
+            and all(
+                    isinstance(self._matr[i][j], Void)
+                    for i, j in zip(range(self._x + x_, x, x_), range(self._y + y_, y, y_))
+                )
+        ):
+            return super().correct(x, y)
 
     def __repr__(self):
         return ('♝', '♗')[self._color]
