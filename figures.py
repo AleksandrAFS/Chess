@@ -116,29 +116,30 @@ class Pawn(Figure):
         self.select = [1, -1][self._color]
         self.run = [2, -2][self._color]
         
-    def access_check(self, x: int, y: int) -> bool:
-    
+    def access_check(self, x: int, y: int) -> None:
+        print(self.select, '2')
         if (
                (
                 (self._x - x == self.select 
                  and abs(self._y - y) <= 1) or 
                 (self.start and 
-                 self._x - x == self.run 
-                 and self._y == y)
+                 self._x - x == self.run
+                 and self._y == y and 
+                 isinstance(self._matr[self._x + -self.select][y], Void))
                 )
             and super().access_check(x, y)
            ):
-            self.start = False
             self.correct(x, y, Figure if self._y != y else Void)
         
-    def correct(self, row: int, col: int, goto: object = Void) -> bool:
+    def correct(self, row: int, col: int, goto: object = Void) -> None:
         matr = self._matr[row]
         
         if (
             isinstance(matr[col], goto)
             and matr[col]._color != self._color
             ):
-              return super().correct(row, col)
+              self.start = False
+              super().correct(row, col)
             
     def __repr__(self) -> str:
         return ('♟', '♙')[self._color]
