@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 
 class Void:
+    '''Пустой класс'''
+
     _color = None
     
     def __repr__(self) -> str:
@@ -9,6 +11,7 @@ class Void:
     
 
 class Figure(ABC):
+    '''Базовый класс для всех фигур'''
 
     _whose_move = True
 
