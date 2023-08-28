@@ -113,11 +113,10 @@ class Pawn(Figure):
     def __init__(self, *args, **kwargs) -> None:
         self.start = True
         super().__init__(*args, **kwargs)
-        self.select = [1, -1][self._color]
-        self.run = [2, -2][self._color]
+        self.select = (1, -1)[self._color]
+        self.run = (2, -2)[self._color]
         
     def access_check(self, x: int, y: int) -> None:
-        print(self.select, '2')
         if (
                (
                 (self._x - x == self.select 
