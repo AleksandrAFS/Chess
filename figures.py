@@ -105,17 +105,28 @@ class King(Figure):
     
 
 class Pawn(Figure):
-    def access_check(self, x: int, y: int) -> bool | None:
-        select = [1, -1][self._color]
+    def __init__(self, *args, **kwargs) -> None:
+        self.start = True
+        super().__init__(*args, **kwargs)
+        self.select = [1, -1][self._color]
+        self.run = [2, -2][self._color]
         
+    def access_check(self, x: int, y: int) -> bool:
+    
         if (
-            self._x - x == select 
-            and abs(self._y - y) <= 1 
+               (
+                (self._x - x == self.select 
+                 and abs(self._y - y) <= 1) or 
+                (self.start and 
+                 self._x - x == self.run 
+                 and self._y == y)
+                )
             and super().access_check(x, y)
            ):
-            return self.correct(x, y, Figure if self._y != y else Void)
-           
-    def correct(self, row: int, col: int, goto: object = Void) -> bool | None:
+            self.start = False
+            self.correct(x, y, Figure if self._y != y else Void)
+        
+    def correct(self, row: int, col: int, goto: object = Void) -> bool:
         matr = self._matr[row]
         
         if (
