@@ -41,4 +41,4 @@ class Board:
             obj._x, obj._y = i, j
 
     def __repr__(self) -> str:
-        return '\n'.join(', '.join(map(str, r)) for r in self.matrix)
+        return '\n'.join(', '.join(map(str, r)) for r in reversed(self.matrix))
