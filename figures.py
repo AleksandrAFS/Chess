@@ -119,8 +119,9 @@ class Pawn(Figure):
         super().__init__(*args, **kwargs)
         self.select = (1, -1)[self._color]
         self.run = (2, -2)[self._color]
+        self.queen = (0, 7)[self._color]
         
-    def access_check(self, x: int, y: int) -> bool | None:
+    def access_check(self, x: int, y: int) -> None:
         if (
                (
                 (self._x - x == self.select 
@@ -132,17 +133,21 @@ class Pawn(Figure):
                 )
             and super().access_check(x, y)
            ):
-            return self.correct(x, y, Figure if self._y != y else Void)
+            self.correct(x, y, Figure if self._y != y else Void)
         
-    def correct(self, row: int, col: int, goto: object = Void) -> bool | None:
+    def correct(self, row: int, col: int, goto: object = Void) -> None:
         matr = self._matr[row]
         
         if (
             isinstance(matr[col], goto)
-            and matr[col]._color != self._color
+            and matr[col]._color != self._color 
+            and super().correct(row, col)
             ):
               self.start = False
-              return super().correct(row, col)
+              if self.queen == row:
+                 value = Queen(self._color, self._matr)
+                 value._x, value._y = row, col
+                 self._matr[row][col] = value
             
     def __repr__(self) -> str:
         return ('♟', '♙')[self._color]
