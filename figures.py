@@ -36,7 +36,7 @@ class Figure(ABC):
         raise NotImplementedError
     
 
-class Castle(Figure):
+class Rook(Figure):
     def access_check(self, x: int, y: int) -> None:
         if (
             (self._x == x 
@@ -69,7 +69,7 @@ class Castle(Figure):
 
 class Queen(Figure):
     def access_check(self, x: int, y: int) -> None:
-        for figur in (Elephant, Castle):
+        for figur in (Elephant, Rook):
             creats = figur(self._color, self._matr)
             creats._x, creats._y = self._x, self._y
             if creats.access_check(x, y):

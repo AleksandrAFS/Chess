@@ -1,5 +1,5 @@
 from itertools import product
-from figures import Castle, Knight, Elephant, Void, Pawn, King, Queen
+from figures import Rook, Knight, Elephant, Void, Pawn, King, Queen
 
 
 class Board:
@@ -8,7 +8,7 @@ class Board:
        
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
-        self.types = (Castle, Knight, Elephant)
+        self.types = (Rook, Knight, Elephant)
         
         self.create(1, True)
         self.create(7, False)
