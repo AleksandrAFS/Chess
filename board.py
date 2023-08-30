@@ -9,7 +9,7 @@ class Board:
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
         self.types = (Rook, Knight, Elephant)
-        
+        self.last = ([], [])
         self.create(1, True)
         self.create(7, False)
         
@@ -33,7 +33,9 @@ class Board:
         #установка кароля и королевы
         
         self.matrix[side - 1][3] = Queen(color, self.matrix)
-        self.matrix[side - 1][4] = King(color, self.matrix)
+        king = King(color, self.matrix)
+        king.last = self.last[not king._color]
+        self.matrix[side - 1][4] = king
         
         if color is False:
             self.matrix[side - 1:] = [*reversed(self.matrix[side - 1:])]
@@ -41,7 +43,9 @@ class Board:
     def end(self) -> None:
         for i, j in product(range(8), repeat=2):
             obj = self.matrix[i][j]
-            obj._x, obj._y = i, j
+            if not isinstance(obj, Void):
+                obj._x, obj._y = i, j
+                self.last[obj._color].append(obj)
 
     def __repr__(self) -> str:
         return '\n'.join(' '.join(map(str, r)) for r in reversed(self.matrix))
