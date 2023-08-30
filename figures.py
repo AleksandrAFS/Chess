@@ -1,10 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-def is_check(figure: object, row: int, col: int) -> bool:
-    pass
-
-
 class Void:
     '''Пустой класс'''
 
