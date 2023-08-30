@@ -1,3 +1,6 @@
+from itertools import product
+
+
 class Board:
     """Шахматная доска, раставляет 
        все экземпляры фигур на поле"""
