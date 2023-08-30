@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-def is_check(figure: object, row: int, col: int) -> bool:
-    pass
 
 
 class Void:
@@ -24,14 +22,22 @@ class Figure(ABC):
         self._matr = matr
 
     def move(self, row: int, col: int) -> bool:
-        whose_move = self._whose_move
+        whose_move = Figure._whose_move
         if self._color == whose_move and self.access_check(row, col):
-            if isinstance(self, King) and any(i.access_check(row, col) for i in self.last): 
-                return False
+            print(type(self))
+            if isinstance(self, King):
+                obj = self._matr[row][col]
+                self._matr[row][col] = self
+                if any(i.access_check(row, col) for i in self.last):
+                    self._matr[row][col] = obj
+                    return False
+                self._matr[row][col] = obj
+            if isinstance(self._matr[row][col], Figure):
+                del self.last[self.last.index(self._matr[row][col])]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
             self._x, self._y = row, col
-            type(self)._whose_move = (True, False)[whose_move]
+            Figure._whose_move = not whose_move
             return True
         return False
         
@@ -124,6 +130,7 @@ class Pawn(Figure):
             and super().access_check(x, y)
            ):
             return self.correct(x, y, Figure if self._y != y else Void)
+        return False
         
     def correct(self, row: int, col: int, goto: object = Void) -> bool:
 
