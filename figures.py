@@ -24,7 +24,6 @@ class Figure(ABC):
     def move(self, row: int, col: int) -> bool:
         whose_move = Figure._whose_move
         if self._color == whose_move and self.access_check(row, col):
-            print(type(self))
             if isinstance(self, King):
                 obj = self._matr[row][col]
                 self._matr[row][col] = self
