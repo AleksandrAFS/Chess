@@ -9,7 +9,7 @@ class Board:
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
         self.types = (Rook, Knight, Elephant)
-        self.last = [[], []]
+        self.last = ([], [])
         
         self.create(1, True)
         self.create(7, False)

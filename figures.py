@@ -1,8 +1,16 @@
 from abc import ABC, abstractmethod
 
 
-def is_check(figure: object, row: int, col: int) -> bool:
-    pass
+def is_check(self: object, row: int, col: int) -> bool:
+
+    obj: object = self._matr[row][col]
+    self._matr[row][col] = self
+
+    res: bool = any(figure.access_check(row, col) for figure in self.last if (figure._x, figure._y) != (row, col))
+
+    self._matr[row][col] = obj
+
+    return res
 
 
 class Void:
@@ -24,22 +32,24 @@ class Figure(ABC):
         self._matr = matr
 
     def move(self, row: int, col: int) -> bool:
+
         whose_move = Figure._whose_move
+
         if self._color == whose_move and self.access_check(row, col):
-            if isinstance(self, King):
-                obj = self._matr[row][col]
-                self._matr[row][col] = self
-                if any(i.access_check(row, col) for i in self.last):
-                    self._matr[row][col] = obj
-                    return False
-                self._matr[row][col] = obj
+            if isinstance(self, King) and is_check(self, row, col):
+                return False
+            
             if isinstance(self._matr[row][col], Figure):
                 del self.last[self.last.index(self._matr[row][col])]
+                
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
             self._x, self._y = row, col
+
             Figure._whose_move = not whose_move
+
             return True
+        
         return False
         
     @abstractmethod
