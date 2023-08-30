@@ -14,6 +14,9 @@ class Board:
         self.create(7, False)
         
         self.end()
+
+    def __getitem__(self, index: int):
+        return self.matrix[index]
             
     def create(self, side: int, color: bool) -> None:
         #установка пешек
@@ -41,4 +44,4 @@ class Board:
             obj._x, obj._y = i, j
 
     def __repr__(self) -> str:
-        return '\n'.join(', '.join(map(str, r)) for r in reversed(self.matrix))
+        return '\n'.join(' '.join(map(str, r)) for r in reversed(self.matrix))
