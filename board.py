@@ -1,7 +1,3 @@
-from itertools import product
-from figures import Rook, Knight, Elephant, Void, Pawn, King, Queen
-
-
 class Board:
     """Шахматная доска, раставляет 
        все экземпляры фигур на поле"""
@@ -9,7 +5,8 @@ class Board:
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
         self.types = (Rook, Knight, Elephant)
-        self.last = ([], [])
+        self.last = [[], []]
+        
         self.create(1, True)
         self.create(7, False)
         
@@ -33,9 +30,7 @@ class Board:
         #установка кароля и королевы
         
         self.matrix[side - 1][3] = Queen(color, self.matrix)
-        king = King(color, self.matrix)
-        king.last = self.last[not king._color]
-        self.matrix[side - 1][4] = king
+        self.matrix[side - 1][4] = King(color, self.matrix)
         
         if color is False:
             self.matrix[side - 1:] = [*reversed(self.matrix[side - 1:])]
@@ -45,6 +40,7 @@ class Board:
             obj = self.matrix[i][j]
             if not isinstance(obj, Void):
                 obj._x, obj._y = i, j
+                obj.last = self.last[not obj._color]
                 self.last[obj._color].append(obj)
 
     def __repr__(self) -> str:
