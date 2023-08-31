@@ -3,15 +3,17 @@ from abc import ABC, abstractmethod
 
 def is_check(self: object, row: int, col: int) -> bool:
 
+    """Проверка шаха/мата королю"""
+    
     obj: object = self._matr[row][col]
     self._matr[row][col] = self
 
-    res: bool = any(figure.access_check(row, col) for figure in self.last if (figure._x, figure._y) != (row, col))
-
+    res: bool = any(figure.access_check(row, col) 
+                    for figure in self.last 
+                    if (figure._x, figure._y) != (row, col))
+  
     self._matr[row][col] = obj
-
     return res
-
 
 class Void:
     '''Пустой класс'''
@@ -26,7 +28,7 @@ class Figure(ABC):
     '''Базовый класс для всех фигур'''
 
     _whose_move = True
-
+    
     def __init__(self, color: bool, matr: list[list[int], list[int]]) -> None:
         self._color = color
         self._matr = matr
@@ -56,7 +58,14 @@ class Figure(ABC):
             self._x, self._y = row, col
             
             Figure._whose_move = not whose_move
-
+            if isinstance(self, Pawn):
+                self.start = False
+                if self.queen == row:
+                    value = Queen(self._color, self._matr)
+                    value._x, value._y = row, col
+                    self._matr[self._x][self._y] = value
+                    self.qn[self.qn.index(self)] = value
+                    value.last, value.your_king = self.last, self.your_king
             return True
         
         return False
@@ -138,38 +147,19 @@ class Pawn(Figure):
         self.queen = (0, 7)[self._color]
 
     def access_check(self, x: int, y: int) -> bool:
-        if (
-               (
-                (self._x - x == self.select 
+        return (
+                (
+                 (self._x - x == self.select 
                  and abs(self._y - y) <= 1) or 
-                (self.start and 
+                 (self.start and 
                  self._x - x == self.run
                  and self._y == y and 
                  isinstance(self._matr[self._x + -self.select][y], Void))
                 )
-            and super().access_check(x, y)
-           ):
-            return self.correct(x, y, Figure if self._y != y else Void)
-        return False
-        
-    def correct(self, row: int, col: int, goto: object = Void) -> bool:
-
-        matr = self._matr[row]
-        
-        if isinstance(matr[col], goto) and matr[col]._color != self._color:
-
-            self.start = False
-
-            if self.queen == row:
-                value = Queen(self._color, self._matr)
-                value._x, value._y = row, col
-                self._matr[row][col] = value
-                self.last[self.last.index(self)] = value
-                value.last, value.your_king = self.last, self.your_king
-            else:
-                return True
-        
-        return False
+                 and super().access_check(x, y) and 
+                 isinstance(self._matr[x][y], Figure if self._y != y else Void) 
+                 and self._matr[x][y]._color != self._color
+        )
             
     def __repr__(self) -> str:
         return ('♟', '♙')[self._color]
