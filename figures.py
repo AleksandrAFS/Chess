@@ -36,21 +36,24 @@ class Figure(ABC):
         whose_move = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
-            #if isinstance(self, King) and is_check(self, row, col):
-            #    return False
+            if isinstance(self, King) and is_check(self, row, col):
+               return False
+            
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
+
+            if isinstance(del_figur, Figure):
+                del self.last[self.last.index(del_figur)]
             
             value = self.your_king
             if is_check(value, value._x, value._y):
+                self.last.append(del_figur)
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
                 return False
             
             self._x, self._y = row, col
-            if isinstance(del_figur, Figure):
-                del self.last[self.last.index(del_figur)]
             
             Figure._whose_move = not whose_move
 
