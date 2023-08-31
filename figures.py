@@ -164,6 +164,8 @@ class Pawn(Figure):
                 value = Queen(self._color, self._matr)
                 value._x, value._y = row, col
                 self._matr[row][col] = value
+                self.last[self.last.index(self)] = value
+                value.last, value.your_king = self.last, self.your_king
             else:
                 return True
         
