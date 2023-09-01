@@ -1,19 +1,46 @@
 from abc import ABC, abstractmethod
 
 
-def is_check(self: object, row: int, col: int) -> bool:
+def is_check(king: object, row: int, col: int) -> bool:
 
     """Проверка шаха/мата королю"""
     
-    obj: object = self._matr[row][col]
-    self._matr[row][col] = self
+    obj: object = king._matr[row][col]
+    king._matr[row][col] = king
 
     res: bool = any(figure.access_check(row, col) 
-                    for figure in self.last 
+                    for figure in king.enemy_figures
                     if (figure._x, figure._y) != (row, col))
   
-    self._matr[row][col] = obj
+    king._matr[row][col] = obj
     return res
+
+
+def is_checkmate(self: object, x: int, y: int) -> bool:
+
+    your_king = self.your_king
+    coordinates: tuple = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y - 1),
+                          (x + 1, y - 1), (x + 1, y + 1))
+    
+    for enemy_figure in self.enemy_figures:
+        for row, col in coordinates:
+
+            if enemy_figure.access_check(row, col):
+
+                obj: object = self._matr[row][col]
+                self._matr[enemy_figure._x][enemy_figure._y] = Void()
+                self._matr[row][col] = enemy_figure
+
+                check = is_check(your_king, x, y)
+                
+                self._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
+                self._matr[row][col] = obj
+
+                if not check:
+                    return False
+                
+    return True
+
 
 def pawn_queen(self) -> None:
     
@@ -26,7 +53,7 @@ def pawn_queen(self) -> None:
         value._x, value._y = self._x, self._y
         self._matr[self._x][self._y] = value
         self.qn[self.qn.index(self)] = value
-        value.last, value.your_king = self.last, self.your_king
+        value.enemy_figures, value.your_king = self.enemy_figures, self.your_king
 
         
 class Void:
@@ -41,15 +68,15 @@ class Void:
 class Figure(ABC):
     '''Базовый класс для всех фигур'''
 
-    _whose_move = True
+    _whose_move: bool = True
     
     def __init__(self, color: bool, matr: list[list[int], list[int]]) -> None:
-        self._color = color
-        self._matr = matr
+        self._color: bool = color
+        self._matr: list = matr
 
     def move(self, row: int, col: int) -> bool:
 
-        whose_move = Figure._whose_move
+        whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
             if isinstance(self, King) and is_check(self, row, col):
@@ -60,11 +87,13 @@ class Figure(ABC):
             self._matr[row][col] = self
 
             if isinstance(del_figur, Figure):
-                del self.last[self.last.index(del_figur)]
+                del self.enemy_figures[self.enemy_figures.index(del_figur)]
             
             value = self.your_king
             if is_check(value, value._x, value._y):
-                self.last.append(del_figur)
+                if is_checkmate(self, value._x, value._y):
+                    pass
+                self.enemy_figures.append(del_figur)
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
                 return False
@@ -72,8 +101,10 @@ class Figure(ABC):
             self._x, self._y = row, col
             
             Figure._whose_move = not whose_move
+
             if isinstance(self, Pawn):
                 pawn_queen(self)
+                
             return True
         
         return False
@@ -176,8 +207,8 @@ class Pawn(Figure):
 class Elephant(Figure):
     def access_check(self, x: int, y: int) -> bool:
         if abs(self._x - x) == abs(self._y - y) and super().access_check(x, y):  
-            x_ = -1 if self._x > x else 1
-            y_=  -1 if self._y > y else 1
+            x_: int = -1 if self._x > x else 1
+            y_: int =  -1 if self._y > y else 1
             if (
                 self._matr[x][y]._color != self._color 
                 and all(

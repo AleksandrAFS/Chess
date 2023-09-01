@@ -20,16 +20,16 @@ class Board:
     """Шахматная доска, раставляет 
        все экземпляры фигур на поле и 
        позволяет взаимодействовать с ними"""
-
-    __result = {
-                Pawn: 1, Knight: 2, Rook: 3,
-                Elephant: 3, King: 0, Queen: 5
-               }
+    
+    __result: dict = {
+            Pawn: 1, Knight: 2, Rook: 3,
+            Elephant: 3, King: 0, Queen: 5
+           }
     
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
         self.types = (Rook, Knight, Elephant)
-        self.last = ([], [])
+        self.all_figures = ([], [])
         self.kinges, self.status = [], perf_counter()
         self.start = str(datetime.now())
         
@@ -71,16 +71,16 @@ class Board:
             obj = self.matrix[i][j]
             if not isinstance(obj, Void):
                 obj._x, obj._y = i, j
-                obj.last = self.last[not obj._color]
-                self.last[obj._color].append(obj)
+                obj.enemy_figures = self.all_figures[not obj._color]
+                self.all_figures[obj._color].append(obj)
                 obj.your_king = self.kinges[not obj._color]
         
     def surrender(self, *, determine_winner: bool = True) -> None:
         """Запись в SQL базу данных результата поединка и 
         удаление данных о фигурах и таблице"""
         
-        x = sum(self.__result[i.__class__] for i in self.last[0])
-        y = sum(self.__result[i.__class__] for i in self.last[1])
+        x = sum(self.__result[i.__class__] for i in self.all_figures[0])
+        y = sum(self.__result[i.__class__] for i in self.all_figures[1])
         
         win = (
             not Figure._whose_move 
@@ -89,7 +89,7 @@ class Board:
         )
         
         time = round(perf_counter() - self.status, 2)
-        kills = f'Убито чёрных - {16 - len(self.last[0])}\nУбито белых - {16 - len(self.last[1])}'
+        kills = f'Убито чёрных - {16 - len(self.all_figures[0])}\nУбито белых - {16 - len(self.all_figures[1])}'
         points = f'Очков у чёрных - {x}\nОчков у белых - {y}'
         stop = str(datetime.now())
         write = ('Черные', 'Белые', 'Ничья')[win], self.start, stop, time, kills, points
@@ -100,7 +100,7 @@ class Board:
             cursor.execute(insert_query)
             CONNECTION.commit()
         
-        self.last = ([], [])
+        self.all_figures = ([], [])
         self.matrix = [[Void()] * 8 for _ in range(8)]
 
     def __repr__(self) -> str:
