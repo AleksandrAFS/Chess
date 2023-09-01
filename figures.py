@@ -15,6 +15,20 @@ def is_check(self: object, row: int, col: int) -> bool:
     self._matr[row][col] = obj
     return res
 
+def pawn_queen(self) -> None:
+    
+    """Перевоплащение пешки в ферзя"""
+    
+    self.start = False
+    
+    if self.queen == self._x:
+        value = Queen(self._color, self._matr)
+        value._x, value._y = self._x, self._y
+        self._matr[self._x][self._y] = value
+        self.qn[self.qn.index(self)] = value
+        value.last, value.your_king = self.last, self.your_king
+
+        
 class Void:
     '''Пустой класс'''
 
@@ -59,13 +73,7 @@ class Figure(ABC):
             
             Figure._whose_move = not whose_move
             if isinstance(self, Pawn):
-                self.start = False
-                if self.queen == row:
-                    value = Queen(self._color, self._matr)
-                    value._x, value._y = row, col
-                    self._matr[self._x][self._y] = value
-                    self.qn[self.qn.index(self)] = value
-                    value.last, value.your_king = self.last, self.your_king
+                pawn_queen(self)
             return True
         
         return False
