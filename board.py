@@ -1,7 +1,20 @@
 from itertools import product
 from figures import King, Knight, Elephant, Queen, Pawn, Rook, Void, Figure
 from time import perf_counter
+import pymysql
+from connectSQL import host, db_name, password, user
 from datetime import datetime
+
+
+CONNECTION = pymysql.connect(
+    host=host,
+    port=3306, 
+    user=user,
+    password=password,
+    database=db_name,
+    cursorclass=pymysql.cursors.DictCursor
+)
+
 
 class Board:
     """Шахматная доска, раставляет 
@@ -12,6 +25,7 @@ class Board:
                 Pawn: 1, Knight: 2, Rook: 3,
                 Elephant: 3, King: 0, Queen: 5
                }
+    
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
         self.types = (Rook, Knight, Elephant)
@@ -60,12 +74,8 @@ class Board:
                 obj.last = self.last[not obj._color]
                 self.last[obj._color].append(obj)
                 obj.your_king = self.kinges[not obj._color]
-                
-    def __repr__(self) -> str:
-        return '\n'.join(' '.join(map(str, r)) for r in reversed(self.matrix))
-    
         
-    def write_to_sql_database(self, *_, surrender: bool = True) -> None:
+    def surrender(self, *, determine_winner: bool = True) -> None:
         """Запись в SQL базу данных результата поединка и 
         удаление данных о фигурах и таблице"""
         
@@ -74,19 +84,25 @@ class Board:
         
         win = (
             not Figure._whose_move 
-            if surrender else 
-            [x > y, x < y, x == y].index(True)
+            if determine_winner else 
+            (x > y, x < y, x == y).index(True)
         )
         
-        
         time = round(perf_counter() - self.status, 2)
-        kills = f'{len(self.last[0])}(Черные):{len(self.last[1])}(Белые)'
-        points = f'{x}(Черные):{y}(Белые)'
+        kills = f'Убито чёрных - {16 - len(self.last[0])}\nУбито белых - {16 - len(self.last[1])}'
+        points = f'Очков у чёрных - {x}\nОчков у белых - {y}'
         stop = str(datetime.now())
-        write = ['Черные', 'Белые', 'Ничья'][win], self.start, stop, time, kills, points
+        write = ('Черные', 'Белые', 'Ничья')[win], self.start, stop, time, kills, points
+
+        with CONNECTION.cursor() as cursor:
+            insert_query = f'''INSERT INTO parties (winner, start_date, end_date, part_time, kills, points)
+            VALUES {str(write)}'''
+            cursor.execute(insert_query)
+            CONNECTION.commit()
         
         self.last = ([], [])
         self.matrix = [[Void()] * 8 for _ in range(8)]
-        sql = f"""INSERT INTO chess(win, start, stop, full_time, kills, points)
-VALUES {str(write)};"""
-        print(sql)
+
+    def __repr__(self) -> str:
+        return '\n'.join(' '.join(map(str, r)) for r in reversed(self.matrix))
+        

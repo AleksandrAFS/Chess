@@ -1,3 +1,4 @@
+from board import Board
 #Test 1
 b = Board()
 b[1][0].move(3, 0)
@@ -15,6 +16,7 @@ b[0][4].move(0, 5)
 b[6][0].move(4, 0)
 b[7][2].move(7, 3)
 print(b)
+b.surrender()
 #output:
 
 #♜ ♞ . ♕ ♚ ♝ ♞ ♜
