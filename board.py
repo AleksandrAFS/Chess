@@ -106,17 +106,3 @@ class Board:
 
     def __repr__(self) -> str:
         return '\n'.join(' '.join(map(str, r)) for r in reversed(self.matrix))
-        
-b = Board()
-
-b[1][4].move(3, 4)
-b[6][3].move(4, 3)
-b[0][5].move(3, 2)
-b[4][3].move(3, 4)
-b[0][1].move(2, 2)
-b[7][3].move(4, 3)
-b[2][2].move(3, 4)
-b[4][3].move(3, 4)
-b[0][4].move(0, 5)
-print(b)
-
