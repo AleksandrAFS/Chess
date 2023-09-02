@@ -48,7 +48,7 @@ class Board:
         for value in range(8):
             pawn = Pawn(color, self.matrix)
             self.matrix[side][value] = pawn
-            pawn.qn = self.last[color]
+            pawn.qn = self.all_figures[color]
         
         #устанока экземпляров классов из кортежа self.types
         
@@ -74,6 +74,7 @@ class Board:
                 obj.enemy_figures = self.all_figures[not obj._color]
                 self.all_figures[obj._color].append(obj)
                 obj.your_king = self.kinges[not obj._color]
+                obj.your_board = self
         
     def surrender(self, *, determine_winner: bool = True) -> None:
         """Запись в SQL базу данных результата поединка и 
@@ -86,7 +87,7 @@ class Board:
             not Figure._whose_move 
             if determine_winner else 
             (x > y, x < y, x == y).index(True)
-        )
+        ) if isinstance(determine_winner, bool) else determine_winner
         
         time = round(perf_counter() - self.status, 2)
         kills = f'Убито чёрных - {16 - len(self.all_figures[0])}\nУбито белых - {16 - len(self.all_figures[1])}'

@@ -4,13 +4,16 @@ from abc import ABC, abstractmethod
 def is_check(king: object, row: int, col: int) -> bool:
 
     """Проверка шаха/мата королю"""
+
+    if (row, col) == (king._x, king._y):
+        return False
     
     obj: object = king._matr[row][col]
     king._matr[row][col] = king
 
     res: bool = any(figure.access_check(row, col) 
                     for figure in king.enemy_figures
-                    if (figure._x, figure._y) != (row, col))
+                    if isinstance(figure, Figure) and (figure._x, figure._y) != (row, col))
   
     king._matr[row][col] = obj
     return res
@@ -91,11 +94,17 @@ class Figure(ABC):
             
             value = self.your_king
             if is_check(value, value._x, value._y):
+
                 if is_checkmate(self, value._x, value._y):
-                    pass
-                self.enemy_figures.append(del_figur)
+                    print(f'''{('Чёрные', 'Белые')[whose_move]} победили! 
+                          Был поставлен мат {('Белым', 'Чёрным')[whose_move]}''')
+                    self.your_board.surrender(determine_winner=int(whose_move))
+                    print('Начните игру заново')
+                    return False
+
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
+
                 return False
             
             self._x, self._y = row, col
