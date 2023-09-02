@@ -2,18 +2,18 @@ from itertools import product
 from figures import King, Knight, Elephant, Queen, Pawn, Rook, Void, Figure
 from time import perf_counter
 import pymysql
-#from connectSQL import host, db_name, password, user
+from connectSQL import host, db_name, password, user
 from datetime import datetime
 
 
-#CONNECTION = pymysql.connect(
-#    host=host,
-#    port=3306, 
-#    user=user,
-#    password=password,
-#    database=db_name,
-#    cursorclass=pymysql.cursors.DictCursor
-#)
+CONNECTION = pymysql.connect(
+    host=host,
+    port=3306, 
+    user=user,
+    password=password,
+    database=db_name,
+    cursorclass=pymysql.cursors.DictCursor
+)
 
 
 class Board:
