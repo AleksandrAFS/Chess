@@ -4,9 +4,6 @@ from abc import ABC, abstractmethod
 def is_check(king: object, row: int, col: int) -> bool:
 
     """Проверка шаха/мата королю"""
-
-    if (row, col) == (king._x, king._y):
-        return False
     
     obj: object = king._matr[row][col]
     king._matr[row][col] = king
@@ -16,6 +13,7 @@ def is_check(king: object, row: int, col: int) -> bool:
                     if isinstance(figure, Figure) and (figure._x, figure._y) != (row, col))
   
     king._matr[row][col] = obj
+    print(res)
     return res
 
 
@@ -82,6 +80,7 @@ class Figure(ABC):
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
+            print(self)
             if isinstance(self, King) and is_check(self, row, col):
                return False
             
@@ -93,7 +92,7 @@ class Figure(ABC):
                 del self.enemy_figures[self.enemy_figures.index(del_figur)]
             
             value = self.your_king
-            if is_check(value, value._x, value._y):
+            if is_check(value, value._x, value._y) and not isinstance(self, King):
 
                 if is_checkmate(self, value._x, value._y):
                     print(f'''{('Чёрные', 'Белые')[whose_move]} победили! 
