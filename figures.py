@@ -16,27 +16,26 @@ def is_check(king: object, row: int, col: int) -> bool:
     return res
 
 
-def is_checkmate(self: object, x: int, y: int) -> bool:
+def is_checkmate(enemy_king: object, enemy_figures: list, x: int, y: int) -> bool:
     
     """Проверка на мат королю"""
     
-    your_king = self.your_king
     coordinates: tuple = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y - 1),
                           (x + 1, y - 1), (x + 1, y + 1))
     
-    for enemy_figure in self.enemy_figures:
+    for enemy_figure in enemy_figures:
         for row, col in coordinates:
 
             if enemy_figure.access_check(row, col):
 
-                obj: object = self._matr[row][col]
-                self._matr[enemy_figure._x][enemy_figure._y] = Void()
-                self._matr[row][col] = enemy_figure
+                obj: object = enemy_king._matr[row][col]
+                enemy_king._matr[enemy_figure._x][enemy_figure._y] = Void()
+                enemy_king._matr[row][col] = enemy_figure
 
-                check = is_check(your_king, x, y)
+                check = is_check(enemy_king, x, y)
                 
-                self._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
-                self._matr[row][col] = obj
+                enemy_king._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
+                enemy_king._matr[row][col] = obj
 
                 if not check:
                     return False
@@ -55,7 +54,7 @@ def pawn_queen(self) -> None:
         value._x, value._y = self._x, self._y
         self._matr[self._x][self._y] = value
         self.qn[self.qn.index(self)] = value
-        value.enemy_figures, value.your_king = self.enemy_figures, self.your_king
+        value.enemy_figures, value.your_king, value.enemy_king = self.enemy_figures, self.your_king, self.enemy_king
 
         
 class Void:
@@ -77,59 +76,46 @@ class Figure(ABC):
         self._matr: list = matr
 
     def move(self, row: int, col: int) -> bool:
-<<<<<<< HEAD
-
-=======
         
         """всевозможные проверки, перед сменой позиции фигуры"""
         
->>>>>>> f5ee7f4e100176c22e5007c09df62b6e2ec6ab0b
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
-                
+            
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
-<<<<<<< HEAD
 
-            if isinstance(del_figur, Figure):
-                del self.enemy_figures[self.enemy_figures.index(del_figur)]
-                
-=======
-            
->>>>>>> f5ee7f4e100176c22e5007c09df62b6e2ec6ab0b
-            value = self.your_king
-            _x, _y =  (row, col) if isinstance(self, King) else (value._x, value._y)
+            your_king = self.your_king
+            _x, _y =  (row, col) if isinstance(self, King) else (your_king._x, your_king._y)
 
-            if is_check(value, _x, _y):
-
-                if is_checkmate(self, value._x, value._y):
-                    print(f'''{('Чёрные', 'Белые')[whose_move]} победили! 
-                        Был поставлен мат {('Белым', 'Чёрным')[whose_move]}''')
-                    self.your_board.surrender(determine_winner=int(whose_move))
-                    print('Начните игру заново')
-
+            if is_check(your_king, _x, _y):
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
-
                 return False
-<<<<<<< HEAD
-=======
+            
+            enemy_king = self.enemy_king
+
+            if is_check(enemy_king, enemy_king._x, enemy_king._y):
+                if is_checkmate(enemy_king, self.enemy_figures, enemy_king._x, enemy_king._y):
+                    print(f"{('Чёрные', 'Белые')[whose_move]} победили!\nБыл поставлен мат {('Белым', 'Чёрным')[whose_move]}")
+                    self.your_board.surrender(determine_winner=int(whose_move))
+                    print('Начните игру заново')
+                    return False
             
             if isinstance(del_figur, Figure):
                 del self.enemy_figures[self.enemy_figures.index(del_figur)]
->>>>>>> f5ee7f4e100176c22e5007c09df62b6e2ec6ab0b
                 
             self._x, self._y = row, col
-                
+            
             Figure._whose_move = not whose_move
 
             if isinstance(self, Pawn):
                 pawn_queen(self)
-                    
+                
             return True
-            
+        
         return False
         
     @abstractmethod

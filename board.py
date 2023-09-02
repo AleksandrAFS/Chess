@@ -74,6 +74,7 @@ class Board:
                 obj.enemy_figures = self.all_figures[not obj._color]
                 self.all_figures[obj._color].append(obj)
                 obj.your_king = self.kinges[not obj._color]
+                obj.enemy_king = self.kinges[obj._color]
                 obj.your_board = self
         
     def surrender(self, *, determine_winner: bool = True) -> None:
