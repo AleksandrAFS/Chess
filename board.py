@@ -1,5 +1,4 @@
-from itertools import product
-from figures import King, Knight, Elephant, Queen, Pawn, Rook, Void, Figure
+from figures import King, Knight, Elephant, Queen, Pawn, Rook, Void, Figure, product
 from time import perf_counter
 import pymysql
 from connectSQL import host, db_name, password, user
