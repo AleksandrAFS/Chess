@@ -79,7 +79,6 @@ class Figure(ABC):
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
-            print(self)
             if isinstance(self, King) and is_check(self, row, col):
                return False
             
