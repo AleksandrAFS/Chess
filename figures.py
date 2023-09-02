@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 def is_check(king: object, row: int, col: int) -> bool:
 
-    """Проверка шаха/мата королю"""
+    """Проверка шаха королю"""
     
     obj: object = king._matr[row][col]
     king._matr[row][col] = king
@@ -17,7 +17,9 @@ def is_check(king: object, row: int, col: int) -> bool:
 
 
 def is_checkmate(self: object, x: int, y: int) -> bool:
-
+    
+    """Проверка на мат королю"""
+    
     your_king = self.your_king
     coordinates: tuple = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y - 1),
                           (x + 1, y - 1), (x + 1, y + 1))
@@ -74,8 +76,10 @@ class Figure(ABC):
         self._color: bool = color
         self._matr: list = matr
 
-        def move(self, row: int, col: int) -> bool:
-
+    def move(self, row: int, col: int) -> bool:
+        
+        """всевозможные проверки, перед сменой позиции фигуры"""
+        
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
@@ -83,9 +87,6 @@ class Figure(ABC):
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
-
-            if isinstance(del_figur, Figure):
-                del self.enemy_figures[self.enemy_figures.index(del_figur)]
             
             value = self.your_king
             _x, _y =  (row, col) if isinstance(self, King) else (value._x, value._y)
@@ -103,6 +104,9 @@ class Figure(ABC):
 
                 return False
             
+            if isinstance(del_figur, Figure):
+                del self.enemy_figures[self.enemy_figures.index(del_figur)]
+                
             self._x, self._y = row, col
             
             Figure._whose_move = not whose_move
