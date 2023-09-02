@@ -13,7 +13,6 @@ def is_check(king: object, row: int, col: int) -> bool:
                     if isinstance(figure, Figure) and (figure._x, figure._y) != (row, col))
   
     king._matr[row][col] = obj
-    print(res)
     return res
 
 
