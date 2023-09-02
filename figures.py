@@ -74,44 +74,44 @@ class Figure(ABC):
         self._color: bool = color
         self._matr: list = matr
 
-        def move(self, row: int, col: int) -> bool:
+    def move(self, row: int, col: int) -> bool:
 
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
-            
+                
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
 
             if isinstance(del_figur, Figure):
                 del self.enemy_figures[self.enemy_figures.index(del_figur)]
-            
+                
             value = self.your_king
             _x, _y =  (row, col) if isinstance(self, King) else (value._x, value._y)
+
             if is_check(value, _x, _y):
 
-                if is_checkmate(self, _x, _y):
+                if is_checkmate(self, value._x, value._y):
                     print(f'''{('Чёрные', 'Белые')[whose_move]} победили! 
-                          Был поставлен мат {('Белым', 'Чёрным')[whose_move]}''')
+                        Был поставлен мат {('Белым', 'Чёрным')[whose_move]}''')
                     self.your_board.surrender(determine_winner=int(whose_move))
                     print('Начните игру заново')
-                    return False
 
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
 
                 return False
-            
+                
             self._x, self._y = row, col
-            
+                
             Figure._whose_move = not whose_move
 
             if isinstance(self, Pawn):
                 pawn_queen(self)
-                
+                    
             return True
-        
+            
         return False
         
     @abstractmethod
