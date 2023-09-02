@@ -74,13 +74,11 @@ class Figure(ABC):
         self._color: bool = color
         self._matr: list = matr
 
-    def move(self, row: int, col: int) -> bool:
+        def move(self, row: int, col: int) -> bool:
 
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
-            if isinstance(self, King) and is_check(self, row, col):
-               return False
             
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
@@ -90,9 +88,10 @@ class Figure(ABC):
                 del self.enemy_figures[self.enemy_figures.index(del_figur)]
             
             value = self.your_king
-            if is_check(value, value._x, value._y) and not isinstance(self, King):
+            _x, _y =  (row, col) if isinstance(self, King) else (value._x, value._y)
+            if is_check(value, _x, _y):
 
-                if is_checkmate(self, value._x, value._y):
+                if is_checkmate(self, _x, _y):
                     print(f'''{('Чёрные', 'Белые')[whose_move]} победили! 
                           Был поставлен мат {('Белым', 'Чёрным')[whose_move]}''')
                     self.your_board.surrender(determine_winner=int(whose_move))
