@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from itertools import product
 
 def is_check(king: object, row: int, col: int) -> bool:
 
@@ -21,24 +21,24 @@ def is_checkmate(enemy_king: object, enemy_figures: list, x: int, y: int) -> boo
     """Проверка на мат королю"""
     
     coordinates: tuple = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y - 1),
-                          (x + 1, y - 1), (x + 1, y + 1))
+                          (x + 1, y - 1), (x + 1, y + 1)) #ошибка - не учтены все возможные варианты, понадлежит дальнейшему исправлению
     
-    for enemy_figure in enemy_figures:
-        for row, col in coordinates:
-
-            if enemy_figure.access_check(row, col):
-
-                obj: object = enemy_king._matr[row][col]
-                enemy_king._matr[enemy_figure._x][enemy_figure._y] = Void()
-                enemy_king._matr[row][col] = enemy_figure
-
-                check = is_check(enemy_king, x, y)
+    for enemy_figure, row, col in product(enemy_figures, range(8), range(8)):
+            
+        if enemy_figure.access_check(row, col):
                 
-                enemy_king._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
-                enemy_king._matr[row][col] = obj
+            obj: object = enemy_king._matr[row][col]
+            enemy_king._matr[enemy_figure._x][enemy_figure._y] = Void()
+            enemy_king._matr[row][col] = enemy_figure
+                
+            check = is_check(enemy_king, *(
+                (row, col) if isinstance(enemy_figure, King) else (x, y))
+                             )
+                
+            enemy_king._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
+            enemy_king._matr[row][col] = obj
 
-                if not check:
-                    return False
+            if not check: return False
                 
     return True
 
@@ -87,25 +87,13 @@ class Figure(ABC):
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
 
-            your_king = self.your_king
-            _x, _y =  (row, col) if isinstance(self, King) else (your_king._x, your_king._y)
-
-            if is_check(your_king, _x, _y):
+            if isinstance(self, King) and is_check(self, self._x, self._y):
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
                 return False
             
-            enemy_king = self.enemy_king
-
-            if is_check(enemy_king, enemy_king._x, enemy_king._y):
-                if is_checkmate(enemy_king, self.enemy_figures, enemy_king._x, enemy_king._y):
-                    print(f"{('Чёрные', 'Белые')[whose_move]} победили!\nБыл поставлен мат {('Белым', 'Чёрным')[whose_move]}")
-                    self.your_board.surrender(determine_winner=int(whose_move))
-                    print('Начните игру заново')
-                    return False
-            
             if isinstance(del_figur, Figure):
-                del self.enemy_figures[self.enemy_figures.index(del_figur)]
+                self.enemy_figures.remove(del_figur)
                 
             self._x, self._y = row, col
             
@@ -113,6 +101,14 @@ class Figure(ABC):
 
             if isinstance(self, Pawn):
                 pawn_queen(self)
+                
+            enemy_king = self.enemy_king
+            if is_check(enemy_king, enemy_king._x, enemy_king._y):
+                if is_checkmate(enemy_king, self.enemy_figures, enemy_king._x, enemy_king._y):
+                    print(f"{('Чёрные', 'Белые')[whose_move]} победили!\nБыл поставлен мат {('Белым', 'Чёрным')[whose_move]}")
+                    self.your_board.surrender(determine_winner=int(whose_move))
+                    print('Начните игру заново')
+                    return False
                 
             return True
         
