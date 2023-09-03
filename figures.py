@@ -1,134 +1,129 @@
 from abc import ABC, abstractmethod
-from itertools import product
+
 
 def is_check(king: object, row: int, col: int) -> bool:
-
     """Проверка шаха королю"""
-    
+
     obj: object = king._matr[row][col]
     king._matr[row][col] = king
 
-    res: bool = any(figure.access_check(row, col) 
+    res: bool = any(figure.access_check(row, col)
                     for figure in king.enemy_figures
                     if isinstance(figure, Figure) and (figure._x, figure._y) != (row, col))
-  
+
     king._matr[row][col] = obj
     return res
 
 
 def is_checkmate(enemy_king: object, enemy_figures: list, x: int, y: int) -> bool:
-    
     """Проверка на мат королю"""
-    
-    coordinates: tuple = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y - 1),
-                          (x + 1, y - 1), (x + 1, y + 1)) #ошибка - не учтены все возможные варианты, понадлежит дальнейшему исправлению
-    
-    for enemy_figure, row, col in product(enemy_figures, range(8), range(8)):
-            
-        if enemy_figure.access_check(row, col):
-                
-            obj: object = enemy_king._matr[row][col]
-            enemy_king._matr[enemy_figure._x][enemy_figure._y] = Void()
-            enemy_king._matr[row][col] = enemy_figure
-                
-            check = is_check(enemy_king, *(
-                (row, col) if isinstance(enemy_figure, King) else (x, y))
-                             )
-                
-            enemy_king._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
-            enemy_king._matr[row][col] = obj
 
-            if not check: return False
-                
+    coordinates: tuple = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y - 1),
+                          (x + 1, y - 1), (x + 1, y + 1))
+
+    for enemy_figure in enemy_figures:
+        for row, col in coordinates:
+
+            if enemy_figure.access_check(row, col):
+
+                obj: object = enemy_king._matr[row][col]
+                enemy_king._matr[enemy_figure._x][enemy_figure._y] = Void()
+                enemy_king._matr[row][col] = enemy_figure
+
+                check = is_check(enemy_king, row, col)
+
+                enemy_king._matr[enemy_figure._x][enemy_figure._y] = enemy_figure
+                enemy_king._matr[row][col] = obj
+
+                if not check:
+                    return False
+
     return True
 
 
 def pawn_queen(self) -> None:
-    
     """Перевоплащение пешки в ферзя"""
-    
+
     self.start = False
-    
+
     if self.queen == self._x:
         value = Queen(self._color, self._matr)
         value._x, value._y = self._x, self._y
         self._matr[self._x][self._y] = value
         self.qn[self.qn.index(self)] = value
-        value.enemy_figures, value.your_king, value.enemy_king = self.enemy_figures, self.your_king, self.enemy_king
+        value.enemy_figures, value.your_king = self.enemy_figures, self.your_king
+        value.enemy_king, value.your_board = self.enemy_king, self.your_board
 
-        
+
 class Void:
     '''Пустой класс'''
 
     _color = None
-    
+
     def __repr__(self) -> str:
         return '.'
-    
+
 
 class Figure(ABC):
     '''Базовый класс для всех фигур'''
 
     _whose_move: bool = True
-    
+
     def __init__(self, color: bool, matr: list[list[int], list[int]]) -> None:
         self._color: bool = color
         self._matr: list = matr
 
-    def move(self, row: int, col: int) -> bool:
-        
+    def move(self, row: int, col: int) -> None:
         """всевозможные проверки, перед сменой позиции фигуры"""
-        
+
         whose_move: bool = Figure._whose_move
 
         if self._color == whose_move and self.access_check(row, col):
-            
+
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
 
-            if isinstance(self, King) and is_check(self, self._x, self._y):
+            your_king = self.your_king
+            _x, _y = (row, col) if isinstance(self, King) else (your_king._x, your_king._y)
+
+            if is_check(your_king, _x, _y):
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
-                return False
-            
+                return
+
             if isinstance(del_figur, Figure):
                 self.enemy_figures.remove(del_figur)
-                
+
             self._x, self._y = row, col
-            
+
             Figure._whose_move = not whose_move
 
             if isinstance(self, Pawn):
                 pawn_queen(self)
-                
+
             enemy_king = self.enemy_king
             if is_check(enemy_king, enemy_king._x, enemy_king._y):
                 if is_checkmate(enemy_king, self.enemy_figures, enemy_king._x, enemy_king._y):
                     print(f"{('Чёрные', 'Белые')[whose_move]} победили!\nБыл поставлен мат {('Белым', 'Чёрным')[whose_move]}")
                     self.your_board.surrender(determine_winner=int(whose_move))
                     print('Начните игру заново')
-                    return False
-                
-            return True
-        
-        return False
-        
+
     @abstractmethod
     def access_check(self, x: int, y: int) -> bool:
         return all(0 <= i < 8 for i in (x, y))
-    
+
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
-    
+
 
 class Rook(Figure):
     def access_check(self, x: int, y: int) -> bool:
         if (self._x == x or self._y == y) and super().access_check(x, y):
 
             start, end = [x] * 8, [y] * 8
-        
+
             match x:
                 case self._x:
                     select = (1, -1)[self._y > y]
@@ -136,11 +131,11 @@ class Rook(Figure):
                 case _:
                     select = (1, -1)[self._x > x]
                     start = range(self._x + select, x, select)
-                
+
             if (self._matr[x][y]._color != self._color
-                and all(isinstance(self._matr[i][j], Void) for i, j in zip(start, end))):
+                    and all(isinstance(self._matr[i][j], Void) for i, j in zip(start, end))):
                 return True
-            
+
         return False
 
     def __repr__(self) -> str:
@@ -155,7 +150,7 @@ class Queen(Figure):
             if creats.access_check(x, y):
                 return True
         return False
-    
+
     def __repr__(self) -> str:
         return ('♛', '♕')[self._color]
 
@@ -166,10 +161,10 @@ class Knight(Figure):
             if self._matr[x][y]._color != self._color:
                 return True
         return False
-            
+
     def __repr__(self) -> str:
         return ('♞', '♘')[self._color]
-    
+
 
 class King(Figure):
     def access_check(self, x: int, y: int) -> bool:
@@ -180,7 +175,7 @@ class King(Figure):
 
     def __repr__(self) -> str:
         return ('♚', '♔')[self._color]
-    
+
 
 class Pawn(Figure):
     def __init__(self, *args, **kwargs) -> None:
@@ -192,38 +187,37 @@ class Pawn(Figure):
 
     def access_check(self, x: int, y: int) -> bool:
         return (
-                (
-                 (self._x - x == self.select 
-                 and abs(self._y - y) <= 1) or 
-                 (self.start and 
+            (
+                (self._x - x == self.select
+                 and abs(self._y - y) <= 1) or
+                (self.start and
                  self._x - x == self.run
-                 and self._y == y and 
+                 and self._y == y and
                  isinstance(self._matr[self._x + -self.select][y], Void))
-                )
-                 and super().access_check(x, y) and 
-                 isinstance(self._matr[x][y], Figure if self._y != y else Void) 
-                 and self._matr[x][y]._color != self._color
+            )
+            and super().access_check(x, y) and
+            isinstance(self._matr[x][y], Figure if self._y != y else Void)
+            and self._matr[x][y]._color != self._color
         )
-            
+
     def __repr__(self) -> str:
         return ('♟', '♙')[self._color]
-            
+
 
 class Elephant(Figure):
     def access_check(self, x: int, y: int) -> bool:
-        if abs(self._x - x) == abs(self._y - y) and super().access_check(x, y):  
+        if abs(self._x - x) == abs(self._y - y) and super().access_check(x, y):
             x_: int = -1 if self._x > x else 1
-            y_: int =  -1 if self._y > y else 1
+            y_: int = -1 if self._y > y else 1
             if (
-                self._matr[x][y]._color != self._color 
+                self._matr[x][y]._color != self._color
                 and all(
-                        isinstance(self._matr[i][j], Void)
-                        for i, j in zip(range(self._x + x_, x, x_), range(self._y + y_, y, y_))
-                    )
+                    isinstance(self._matr[i][j], Void)
+                    for i, j in zip(range(self._x + x_, x, x_), range(self._y + y_, y, y_))
+                )
             ):
                 return True
         return False
 
-
     def __repr__(self) -> str:
-        return ('♝', '♗')[self._color] 
+        return ('♝', '♗')[self._color]
