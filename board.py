@@ -3,7 +3,7 @@ from figures import King, Knight, Elephant, Queen, Pawn, Rook, Void, Figure
 from time import perf_counter
 import pymysql
 from connectSQL import host, db_name, password, user
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 CONNECTION = pymysql.connect(
@@ -90,7 +90,7 @@ class Board:
             (x > y, x < y, x == y).index(True)
         ) if isinstance(determine_winner, bool) else determine_winner
 
-        time = round(perf_counter() - self.status, 2)
+        time = str(timedelta(seconds=round(perf_counter() - self.status)))
         kills = f'Убито чёрных - {16 - len(self.all_figures[0])}\nУбито белых - {16 - len(self.all_figures[1])}'
         points = f'Очков у чёрных - {x}\nОчков у белых - {y}'
         stop = str(datetime.now())
