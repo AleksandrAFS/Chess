@@ -1,5 +1,5 @@
 from itertools import product
-from figures import King, Knight, Elephant, Queen, Pawn, Rook, Void, Figure
+from figures import King, Knight, Bishop, Queen, Pawn, Rook, Void, Figure
 from time import perf_counter
 import pymysql
 from connectSQL import host, db_name, password, user
@@ -23,12 +23,12 @@ class Board:
 
     __result: dict = {
         Pawn: 1, Knight: 2, Rook: 3,
-        Elephant: 3, King: 0, Queen: 5
+        Bishop: 3, King: 0, Queen: 5
     }
 
     def __init__(self) -> None:
         self.matrix = [[Void()] * 8 for _ in range(8)]
-        self.types = (Rook, Knight, Elephant)
+        self.types = (Rook, Knight, Bishop)
         self.all_figures = ([], [])
         self.kinges, self.status = [], perf_counter()
         self.start = str(datetime.now())

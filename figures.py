@@ -83,6 +83,9 @@ class Figure(ABC):
             del_figur = self._matr[row][col]
             self._matr[self._x][self._y] = Void()
             self._matr[row][col] = self
+            
+            if isinstance(del_figur, Figure):
+                self.enemy_figures.remove(del_figur)
 
             your_king = self.your_king
             _x, _y = (row, col) if isinstance(self, King) else (your_king._x, your_king._y)
@@ -90,10 +93,8 @@ class Figure(ABC):
             if is_check(your_king, _x, _y):
                 self._matr[row][col] = del_figur
                 self._matr[self._x][self._y] = self
+                self.enemy_figures.append(del_figur)
                 return
-
-            if isinstance(del_figur, Figure):
-                self.enemy_figures.remove(del_figur)
 
             self._x, self._y = row, col
 
@@ -144,7 +145,7 @@ class Rook(Figure):
 
 class Queen(Figure):
     def access_check(self, x: int, y: int) -> bool:
-        for figur in (Elephant, Rook):
+        for figur in (Bishop, Rook):
             creats = figur(self._color, self._matr)
             creats._x, creats._y = self._x, self._y
             if creats.access_check(x, y):
@@ -204,7 +205,7 @@ class Pawn(Figure):
         return ('♟', '♙')[self._color]
 
 
-class Elephant(Figure):
+class Bishop(Figure):
     def access_check(self, x: int, y: int) -> bool:
         if abs(self._x - x) == abs(self._y - y) and super().access_check(x, y):
             x_: int = -1 if self._x > x else 1
