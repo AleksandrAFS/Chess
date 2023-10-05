@@ -12,5 +12,6 @@
       <p>(если верно - то перемещаемся на данную позицию на доске.)</p>
       <p>Вражеская фигура(другой color) - удаляем экземпляр ее класса и становимся на данную позицию. </p>
       <p>correct (параметры: None) - проверка на путь фигур.</p>
+      <img src="https://www.google.com/imgres?imgurl=https%3A%2F%2Fspectrum.ieee.org%2Fmedia-library%2Fimage.jpg%3Fid%3D33364099&tbnid=kna4zUJOrGPFlM&vet=12ahUKEwim7KWv296BAxXbDRAIHfNjC-UQMygCegQIARBq..i&imgrefurl=https%3A%2F%2Fspectrum.ieee.org%2Fpython-compiler&docid=LBST9_yLP6F9yM&w=2706&h=2030&q=python&client=opera&ved=2ahUKEwim7KWv296BAxXbDRAIHfNjC-UQMygCegQIARBq" widht="200" height="230">
    </body>
 </html>
