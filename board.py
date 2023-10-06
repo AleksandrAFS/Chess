@@ -97,10 +97,16 @@ class Board:
         write = ('Черные', 'Белые', 'Ничья')[win], self.start, stop, time, kills, points
 
         with CONNECTION.cursor() as cursor:
-            insert_query = f'''INSERT INTO parties (winner, start_date, end_date, part_time, kills, points)
-            VALUES {str(write)}'''
-            cursor.execute(insert_query)
-            CONNECTION.commit()
+            try:
+                cursor.execute("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;")
+                cursor.execute("START TRANSACTION;")
+                insert_query = f'''INSERT INTO parties (winner, start_date, end_date, part_time, kills, points)\
+                                   VALUES {str(write)};'''
+                cursor.execute(insert_query)
+                CONNECTION.commit()
+            except Exception as e:
+                CONNECTION.rollback()
+                print(e)
 
         self.all_figures = ([], [])
         self.matrix = [[Void()] * 8 for _ in range(8)]
