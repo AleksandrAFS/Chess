@@ -1,6 +1,6 @@
 <!DOCTYPE>
 <html>
-   <heady>
+   <head>
       <style>
          p {
             color: blue;
@@ -12,7 +12,7 @@
             font-size: 120%;
             }
       </style>
-   </heady>
+   </head>
    <body>
       <h1>План проекта:</h1>
       <p>совместно создаем класс Board и King
