@@ -1,15 +1,5 @@
 <!DOCTYPE>
 <html>
-   <head>
-      <style>
-         h1 {
-            text-align: center;
-            }
-         ol {
-           list-style-type: upper-roman;
-         }
-      </style>
-   </head>
    <body>
       <h1><b>План проекта:</b></h1>
       <ol style="text-align: left">
